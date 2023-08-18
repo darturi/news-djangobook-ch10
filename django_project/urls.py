@@ -15,8 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # included for url consistency in the sign up page and log in log out
+    # and we must create our own sign up
+    path("accounts/", include("accounts.urls")),
+    # included so we can utilize the built in log in and log out views
+    path("accounts/", include("django.contrib.auth.urls")),
+    # the homepage url (shortcut as to not make a dedicated pages app yet)
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
 ]
