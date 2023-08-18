@@ -16,7 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,6 +24,6 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     # included so we can utilize the built in log in and log out views
     path("accounts/", include("django.contrib.auth.urls")),
-    # the homepage url (shortcut as to not make a dedicated pages app yet)
-    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    # Path for the new home page as stored in the pages app
+    path("", include("pages.urls")),
 ]
