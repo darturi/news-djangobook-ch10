@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Articles{% endblock title %}
+
+{% block content %}
+<!--Recall that ListView returns an object with the name [MODEL_NAME]_list
+that we can iterate through-->
+{% for article in article_list %}
+<div class="card">
+    <div class="card-header">
+        <span class="fw-bold">
+            <!--Link to detail view of one specific article-->
+            <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+        </span> &middot;
+        <span class="text-muted">
+            by {{ article.author }} | {{ article.date }}
+        </span>
+    </div>
+    <div class="card-body">
+        {{ article.body }}
+    </div>
+    <div class="card-footer text-center text-muted">
+        <!--Link to edit a specific article-->
+        <a href="{% url 'article_edit' article.pk %}">Edit</a>
+        <!--Link to delete a specific article-->
+        <a href="{% url 'article_delete' article.pk %}"> Delete</a>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

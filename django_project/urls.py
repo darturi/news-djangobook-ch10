@@ -24,6 +24,8 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     # included so we can utilize the built in log in and log out views
     path("accounts/", include("django.contrib.auth.urls")),
+    # url path for articles
+    path("articles/", include("articles.urls")),
     # Path for the new home page as stored in the pages app
     path("", include("pages.urls")),
 ]
