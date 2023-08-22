@@ -20,10 +20,12 @@ that we can iterate through-->
         {{ article.body }}
     </div>
     <div class="card-footer text-center text-muted">
+        {% if article.author.pk == request.user.pk %}
         <!--Link to edit a specific article-->
         <a href="{% url 'article_edit' article.pk %}">Edit</a>
         <!--Link to delete a specific article-->
         <a href="{% url 'article_delete' article.pk %}"> Delete</a>
+        {% endif %}
     </div>
 </div>
 {% endfor %}
