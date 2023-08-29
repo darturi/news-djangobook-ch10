@@ -7,6 +7,8 @@
 that we can iterate through-->
 {% for article in article_list %}
 <div class="card">
+
+    <!--Div for displaying article author-->
     <div class="card-header">
         <span class="fw-bold">
             <!--Link to detail view of one specific article-->
@@ -16,9 +18,14 @@ that we can iterate through-->
             by {{ article.author }} | {{ article.date }}
         </span>
     </div>
+
+    <!--Div for displaying article body-->
     <div class="card-body">
         {{ article.body }}
     </div>
+
+    <!--if statement that makes edit and delete links accessible to 
+        article author-->
     <div class="card-footer text-center text-muted">
         {% if article.author.pk == request.user.pk %}
         <!--Link to edit a specific article-->
@@ -26,6 +33,21 @@ that we can iterate through-->
         <!--Link to delete a specific article-->
         <a href="{% url 'article_delete' article.pk %}"> Delete</a>
         {% endif %}
+
+        <!--New link to comment from list view-->
+        <a href="{{ article.get_absolute_url }}"> New Comment</a>
+    </div>
+
+    <!--Div for displaying comments-->
+    <div class="card-footer">
+        {% for comment in article.comment_set.all %}
+        <p>
+            <span class="fw-bold">
+                {{ comment.author }} &middot;
+            </span>
+            {{ comment }}
+        </p>
+        {% endfor %}
     </div>
 </div>
 {% endfor %}
