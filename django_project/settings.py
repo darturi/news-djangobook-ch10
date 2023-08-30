@@ -11,21 +11,25 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from environs import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = Env()
+env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-*v9b1t)!xej0j15re1-(9aa$6zuobq1d_t(^yto7ks)lc)(f*6"
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["django-book-ch17-news.fly.dev", "localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://django-book-ch17-news.fly.dev"]
 
 
 # Application definition
@@ -36,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Third Party Apps
     "crispy_forms",
@@ -51,6 +56,7 @@ TIME_ZONE = "America/New_York"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -82,10 +88,12 @@ WSGI_APPLICATION = "django_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Set it such that SQLite is used locally but PostgreSQL is used in production
+# Works becuase the environs[django] package we downloaded contained an element
+# that looks for a DATABASE_URL environment variable and configures it for us
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "default": env.dj_db_url("DATABASE_URL", default="sqlite:///db.sqlite3"),
     }
 }
 
@@ -128,7 +136,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# The below four variables ensure that collect static works correctly
+
+# url location of all static files in production
 STATIC_URL = "static/"
+# Refers to any additional locations for static files beyond an apps static folder
+STATICFILES_DIRS = [BASE_DIR / "static"]
+# Directory location of all static files once compiled with collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Storage engine used by collectstatic
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
